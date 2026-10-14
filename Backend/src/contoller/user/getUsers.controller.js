@@ -18,12 +18,6 @@ const getUsers = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(
-            "Get Users Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "Unable to get users"
         });

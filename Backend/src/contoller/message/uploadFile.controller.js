@@ -28,12 +28,6 @@ const uploadFile = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(
-            "File Upload Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "File upload failed"
         });

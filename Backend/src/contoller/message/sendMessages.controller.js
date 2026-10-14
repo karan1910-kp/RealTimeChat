@@ -23,9 +23,6 @@ const sendMessage = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log("Send Message Error:", error.message);
-
         res.status(500).json({
             message: "Unable to send message"
         });

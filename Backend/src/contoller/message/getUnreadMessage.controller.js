@@ -25,16 +25,9 @@ const getUnreadMessages = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(
-            "Unread Messages Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "Unable to get unread messages"
         });
-
     }
 };
 

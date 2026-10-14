@@ -55,11 +55,6 @@ const clearChat = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(
-            "Clear Chat Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "Unable to clear chat"
         });

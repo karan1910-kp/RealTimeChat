@@ -37,18 +37,10 @@ function AuthProvider({ children }) {
                 setUser(response.user);
 
             } catch (error) {
-
-                console.log(
-                    "Auth Check Error:",
-                    error.response?.data?.message ||
-                    error.message
-                );
-
                 localStorage.removeItem("token");
 
                 setToken(null);
                 setUser(null);
-
             } finally {
 
                 setLoading(false);

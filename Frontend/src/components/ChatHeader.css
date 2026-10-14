@@ -1,0 +1,153 @@
+/* Neon glass header — scoped to ChatHeader only. */
+.chat-header-neon {
+    isolation: isolate;
+    position: relative;
+    margin: 10px 10px 9px;
+    border: 1px solid rgba(73, 110, 190, 0.28);
+    border-radius: 23px;
+    background:
+        radial-gradient(ellipse at 12% 0%, rgba(0, 195, 255, 0.13), transparent 42%),
+        radial-gradient(ellipse at 88% 100%, rgba(184, 55, 255, 0.15), transparent 45%),
+        linear-gradient(115deg, rgba(7, 17, 39, 0.97), rgba(10, 18, 43, 0.96) 54%, rgba(20, 11, 39, 0.97));
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.chat-header-neon::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: 0;
+    padding: 1.5px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        #00e5ff 0%,
+        #247bff 23%,
+        #8b35ff 47%,
+        #ff42c7 65%,
+        #2ddcff 83%,
+        #00e5ff 100%
+    );
+    background-size: 280% 100%;
+    animation: chat-header-border-flow 8s linear infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+.chat-header-neon::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.95), rgba(175, 66, 255, 0.9), transparent);
+    opacity: 0.9;
+}
+
+.chat-header-icon-btn,
+.chat-header-video-btn {
+    position: relative;
+    color: #eaf4ff;
+    border: 1px solid rgba(101, 132, 190, 0.32);
+    background: linear-gradient(145deg, rgba(17, 35, 65, 0.94), rgba(12, 20, 43, 0.96));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 4px 13px rgba(0, 0, 0, 0.15);
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.chat-header-icon-btn:hover:not(:disabled) {
+    border-color: rgba(0, 220, 255, 0.72);
+    background: linear-gradient(145deg, rgba(17, 49, 79, 0.98), rgba(23, 23, 62, 0.98));
+    box-shadow: 0 0 16px rgba(0, 205, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
+}
+
+.chat-header-video-btn {
+    border-color: rgba(0, 218, 255, 0.62);
+    color: #80f2ff;
+    background: linear-gradient(140deg, rgba(8, 70, 130, 0.85), rgba(46, 30, 111, 0.88));
+    box-shadow: 0 0 15px rgba(0, 181, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.chat-header-video-btn:hover:not(:disabled) {
+    border-color: rgba(243, 78, 218, 0.85);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(52, 194, 255, 0.23), 0 0 16px rgba(218, 55, 255, 0.13);
+    transform: translateY(-1px);
+}
+
+.chat-header-video-btn:disabled,
+.chat-header-icon-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.42;
+}
+
+.chat-header-icon-btn:focus-visible,
+.chat-header-video-btn:focus-visible {
+    outline: 2px solid #5eeeff;
+    outline-offset: 3px;
+}
+
+.chat-header-avatar-frame {
+    padding: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(140deg, #00e5ff, #4177ff 42%, #be45ff 70%, #ff54cd);
+    box-shadow: 0 0 15px rgba(23, 170, 255, 0.18);
+}
+
+.chat-header-avatar {
+    background: linear-gradient(140deg, #162a4b, #111827);
+    color: #bcefff;
+    border: 2px solid rgba(7, 15, 35, 0.98);
+}
+
+.chat-header-presence {
+    border-color: #091327;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.28);
+}
+
+.chat-header-presence.is-online {
+    background-color: #34d399;
+}
+
+.chat-header-presence.is-offline {
+    background-color: #64748b;
+    box-shadow: none;
+}
+
+.chat-header-menu {
+    border: 1px solid rgba(73, 125, 205, 0.4);
+    background: linear-gradient(145deg, rgba(12, 25, 49, 0.99), rgba(22, 14, 43, 0.99));
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 190, 255, 0.08);
+    backdrop-filter: blur(18px);
+}
+
+@keyframes chat-header-border-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 280% 50%; }
+}
+
+@media (max-width: 420px) {
+    .chat-header-neon {
+        margin: 7px 6px 6px;
+        border-radius: 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chat-header-neon::before {
+        animation: none;
+        background-position: 50% 50%;
+    }
+
+    .chat-header-icon-btn,
+    .chat-header-video-btn {
+        transition: none;
+    }
+}

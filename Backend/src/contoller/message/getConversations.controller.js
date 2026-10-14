@@ -94,16 +94,9 @@ const getConversations = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(
-            "Get Conversations Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "Unable to get conversations"
         });
-
     }
 
 };

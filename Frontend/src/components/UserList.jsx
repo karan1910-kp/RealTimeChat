@@ -1,125 +1,97 @@
-import {
-    Users
-} from "lucide-react";
-
+import { Users } from "lucide-react";
 import UserCard from "./UserCard";
-
+import "./UserList.css";
 
 function UserList({
-    users,
+    users = [],
     selectUser,
-    unreadMessages,
-    onlineUsers,
-    lastMessages
+    unreadMessages = {},
+    onlineUsers = [],
+    lastMessages = {},
+    selectedUser = null,
 }) {
-
     return (
+        <div className="user-list-panel flex h-full min-h-0 flex-col">
+           {/* CONVERSATIONS HEADER */}
+
+<div className="
+    flex shrink-0 items-center justify-between gap-3
+    border-b border-cyan-400/15
+    px-4 py-4
+">
+
+    {/* LEFT: ICON + TITLE */}
+
+    <div className="flex min-w-0 items-center gap-3">
 
         <div className="
-            flex
-            flex-col
-            h-full
+            flex h-10 w-10 shrink-0 items-center justify-center
+            rounded-xl
+            border border-indigo-400/25
+            bg-gradient-to-br from-indigo-500/20 to-cyan-500/10
+            text-cyan-300
+            shadow-lg shadow-cyan-500/5
         ">
+            <Users size={20} aria-hidden="true" />
+        </div>
 
-            {/* =========================
-                USERS HEADER
-            ========================== */}
+        <div className="min-w-0">
 
-            <div className="
-                px-4
-                py-4
-                flex
-                items-center
-                justify-between
+            <h2 className="
+                truncate
+                text-sm font-bold tracking-wide
+                text-white
             ">
+                Conversations
+            </h2>
 
-                <div className="
-                    flex
-                    items-center
-                    gap-2
-                ">
-
-                    <div className="
-                        w-9
-                        h-9
-                        rounded-xl
-                        bg-indigo-100
-                        text-indigo-600
-                        flex
-                        items-center
-                        justify-center
-                    ">
-
-                        <Users size={19} />
-
-                    </div>
-
-
-                    <div>
-
-                        <h2 className="
-                            text-lg
-                            font-bold
-                            text-slate-900
-                        ">
-                            Messages
-                        </h2>
-
-                        <p className="
-                            text-xs
-                            text-slate-400
-                        ">
-                            {users.length} users
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {/* =========================
-                USER LIST
-            ========================== */}
-
-            <div className="
-                flex-1
-                overflow-y-auto
-                px-1
-                pb-3
+            <p className="
+                mt-1
+                text-xs font-medium
+                text-slate-400
             ">
+                Your recent chats
+            </p>
 
-                {users.map((item) => (
+        </div>
 
-                    <UserCard
-                        key={item._id}
-                        user={item}
-                        selectUser={selectUser}
-                        unreadCount={
-                            unreadMessages[
-                                String(item._id)
-                            ] || 0
-                        }
-                        isOnline={
-                            onlineUsers.includes(
-                                String(item._id)
-                            )
-                        }
-                        lastMessage={
-                            lastMessages[
-                                String(item._id)
-                            ]
-                        }
-                    />
+    </div>
 
-                ))}
 
+    {/* RIGHT: USER COUNT */}
+
+
+
+</div>
+
+            {/* USER LIST */}
+            <div className="user-list-scroll min-h-0 flex-1 overflow-y-auto pb-3">
+                {users.length > 0 ? (
+                    users.map((item) => {
+                        const userId = String(item._id);
+
+                        return (
+                            <UserCard
+                                key={item._id}
+                                user={item}
+                                selectUser={selectUser}
+                                unreadCount={unreadMessages[userId] || 0}
+                                isOnline={onlineUsers.includes(userId)}
+                                lastMessage={lastMessages[userId]}
+                                isSelected={String(selectedUser?._id || "") === userId}
+                            />
+                        );
+                    })
+                ) : (
+                    <div className="user-list-empty mx-3 mt-2 rounded-2xl px-4 py-8 text-center">
+                        <Users size={25} className="mx-auto mb-3 text-slate-500" aria-hidden="true" />
+                        <p className="text-sm font-medium text-slate-200">No users found</p>
+                        <p className="mt-1 text-xs text-slate-500">Try another search term.</p>
+                    </div>
+                )}
             </div>
-
         </div>
     );
 }
-
 
 export default UserList;

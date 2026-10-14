@@ -20,12 +20,6 @@ const getMe = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(
-            "Get Me Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "Unable to get user"
         });

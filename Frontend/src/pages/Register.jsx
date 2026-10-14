@@ -1,393 +1,285 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { validateEmail } from "../utils/emailValidation";
 import { register } from "../services/auth.service";
-
+import Toast from "../components/Toast";
 import {
-    MessageCircle,
-    User,
-    Mail,
-    Lock,
-    ArrowRight
+  MessageCircle,
+  User,
+  Mail,
+  Lock,
+  ArrowRight,
+  ArrowLeft,
+  Home,
 } from "lucide-react";
 
+import "../Auth.css";
 
 function Register() {
-
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-    const navigate = useNavigate();
-
-
-    const handleRegister = async (e) => {
-
-        e.preventDefault();
-
-        try {
-
-            const response = await register(
-                name,
-                email,
-                password
-            );
-
-            console.log(response);
-
-            alert("Registration successful!");
-
-            navigate("/");
-
-        } catch (error) {
-
-            console.log(
-                "REGISTER ERROR:",
-                error
-            );
-
-            alert(
-                error.response?.data?.message ||
-                "Registration failed"
-            );
-        }
-    };
-
-
-    return (
-
-        <div className="
-            min-h-screen
-            bg-slate-100
-            flex
-            items-center
-            justify-center
-            px-4
-        ">
-
-            <div className="
-                w-full
-                max-w-md
-                bg-white
-                rounded-3xl
-                shadow-xl
-                border
-                border-slate-200
-                p-8
-            ">
-
-                {/* =========================
-                    LOGO
-                ========================== */}
-
-                <div className="
-                    flex
-                    flex-col
-                    items-center
-                    mb-8
-                ">
-
-                    <div className="
-                        w-16
-                        h-16
-                        rounded-2xl
-                        bg-indigo-600
-                        flex
-                        items-center
-                        justify-center
-                        shadow-lg
-                        mb-4
-                    ">
-
-                        <MessageCircle
-                            size={34}
-                            className="text-white"
-                        />
-
-                    </div>
-
-
-                    <h1 className="
-                        text-3xl
-                        font-bold
-                        text-slate-900
-                    ">
-                        Create Account
-                    </h1>
-
-
-                    <p className="
-                        text-slate-500
-                        mt-2
-                        text-sm
-                    ">
-                        Join our real-time chat
-                    </p>
-
-                </div>
-
-
-                {/* =========================
-                    REGISTER FORM
-                ========================== */}
-
-                <form
-                    onSubmit={handleRegister}
-                    className="space-y-5"
-                >
-
-                    {/* NAME */}
-
-                    <div>
-
-                        <label className="
-                            block
-                            text-sm
-                            font-medium
-                            text-slate-700
-                            mb-2
-                        ">
-                            Name
-                        </label>
-
-
-                        <div className="relative">
-
-                            <User
-                                size={20}
-                                className="
-                                    absolute
-                                    left-3
-                                    top-1/2
-                                    -translate-y-1/2
-                                    text-slate-400
-                                "
-                            />
-
-
-                            <input
-                                type="text"
-                                placeholder="Enter your name"
-                                value={name}
-                                onChange={(e) =>
-                                    setName(e.target.value)
-                                }
-                                className="
-                                    w-full
-                                    pl-11
-                                    pr-4
-                                    py-3
-                                    border
-                                    border-slate-300
-                                    rounded-xl
-                                    outline-none
-                                    text-slate-900
-                                    placeholder:text-slate-400
-                                    focus:border-indigo-500
-                                    focus:ring-2
-                                    focus:ring-indigo-100
-                                    transition
-                                "
-                            />
-
-                        </div>
-
-                    </div>
-
-
-                    {/* EMAIL */}
-
-                    <div>
-
-                        <label className="
-                            block
-                            text-sm
-                            font-medium
-                            text-slate-700
-                            mb-2
-                        ">
-                            Email
-                        </label>
-
-
-                        <div className="relative">
-
-                            <Mail
-                                size={20}
-                                className="
-                                    absolute
-                                    left-3
-                                    top-1/2
-                                    -translate-y-1/2
-                                    text-slate-400
-                                "
-                            />
-
-
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                value={email}
-                                onChange={(e) =>
-                                    setEmail(e.target.value)
-                                }
-                                className="
-                                    w-full
-                                    pl-11
-                                    pr-4
-                                    py-3
-                                    border
-                                    border-slate-300
-                                    rounded-xl
-                                    outline-none
-                                    text-slate-900
-                                    placeholder:text-slate-400
-                                    focus:border-indigo-500
-                                    focus:ring-2
-                                    focus:ring-indigo-100
-                                    transition
-                                "
-                            />
-
-                        </div>
-
-                    </div>
-
-
-                    {/* PASSWORD */}
-
-                    <div>
-
-                        <label className="
-                            block
-                            text-sm
-                            font-medium
-                            text-slate-700
-                            mb-2
-                        ">
-                            Password
-                        </label>
-
-
-                        <div className="relative">
-
-                            <Lock
-                                size={20}
-                                className="
-                                    absolute
-                                    left-3
-                                    top-1/2
-                                    -translate-y-1/2
-                                    text-slate-400
-                                "
-                            />
-
-
-                            <input
-                                type="password"
-                                placeholder="Enter your password"
-                                value={password}
-                                onChange={(e) =>
-                                    setPassword(e.target.value)
-                                }
-                                className="
-                                    w-full
-                                    pl-11
-                                    pr-4
-                                    py-3
-                                    border
-                                    border-slate-300
-                                    rounded-xl
-                                    outline-none
-                                    text-slate-900
-                                    placeholder:text-slate-400
-                                    focus:border-indigo-500
-                                    focus:ring-2
-                                    focus:ring-indigo-100
-                                    transition
-                                "
-                            />
-
-                        </div>
-
-                    </div>
-
-
-                    {/* REGISTER BUTTON */}
-
-                    <button
-                        type="submit"
-                        className="
-                            w-full
-                            py-3
-                            bg-indigo-600
-                            hover:bg-indigo-700
-                            text-white
-                            font-semibold
-                            rounded-xl
-                            flex
-                            items-center
-                            justify-center
-                            gap-2
-                            shadow-md
-                            hover:shadow-lg
-                            transition
-                            duration-200
-                            cursor-pointer
-                        "
-                    >
-
-                        Create Account
-
-                        <ArrowRight
-                            size={19}
-                        />
-
-                    </button>
-
-                </form>
-
-
-                {/* =========================
-                    LOGIN
-                ========================== */}
-
-                <div className="
-                    mt-7
-                    text-center
-                    text-sm
-                    text-slate-500
-                ">
-
-                    <span>
-                        Already registered?
-                    </span>
-
-
-                    <button
-                        type="button"
-                        onClick={() =>
-                            navigate("/")
-                        }
-                        className="
-                            ml-1
-                            text-indigo-600
-                            font-semibold
-                            hover:text-indigo-700
-                            hover:underline
-                            cursor-pointer
-                        "
-                    >
-                        Login
-                    </button>
-
-                </div>
-
-            </div>
-
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [toast, setToast] = useState({message: "",type: "success",});
+
+  const navigate = useNavigate();
+
+  // =========================
+  // REGISTER FUNCTION
+  // =========================
+const handleRegister = async (e) => {
+  e.preventDefault();
+
+  if (loading) return;
+
+  const validationError = validateEmail(email);
+
+  if (validationError) {
+    setEmailError(validationError);
+    setToast({
+      message: validationError,
+      type: "error",
+    });
+    return;
+  }
+
+  setEmailError("");
+
+  if (!name.trim()) {
+    setToast({
+      message: "Please enter your full name.",
+      type: "error",
+    });
+    return;
+  }
+
+  if (!password) {
+    setToast({
+      message: "Please create a password.",
+      type: "error",
+    });
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    await register(name.trim(), email, password);
+
+    navigate("/login", {
+      state: {
+        toast: {
+          message: "Your account has been created successfully!",
+          type: "success",
+        },
+      },
+    });
+  } catch (error) {
+    console.error("REGISTER ERROR:", error);
+
+    const status = error.response?.status;
+
+    let message;
+
+    if (status === 409) {
+      message = "This email is already registered.";
+    } else if (!error.response) {
+      message = "Unable to connect. Please check your internet connection.";
+    } else {
+      message =
+        error.response?.data?.message ||
+        "Registration failed. Please try again.";
+    }
+
+    setToast({
+      message,
+      type: "error",
+    });
+  } finally {
+    setLoading(false);
+  }
+};  // =========================
+  // REGISTER UI
+  // =========================
+
+  return (
+    <div className="auth-page">
+      <Toast
+  message={toast.message}
+  type={toast.type}
+  onClose={() =>
+    setToast({
+      message: "",
+      type: "success",
+    })
+  }
+/>
+      <div className="auth-box">
+
+        {/* BACK TO HOME BUTTON */}
+
+<div className="auth-home-row">
+  <button
+    type="button"
+    className="auth-home-button"
+    onClick={() => navigate("/")}
+  >
+    <ArrowLeft size={17} />
+    <span>Back to Home</span>
+    <Home size={17} />
+  </button>
+</div>
+
+        {/* LOGO */}
+
+        <div className="auth-icon">
+           <span className="home-brand-icon"><MessageCircle size={26} /><i /><i /><i /></span>
         </div>
-    );
-}
 
+        {/* HEADING */}
+
+        <h1>Create Account</h1>
+
+        <p className="auth-subtitle">
+          Join our real-time chat
+        </p>
+
+        {/* REGISTER FORM */}
+
+        <form
+          onSubmit={handleRegister}
+          className="auth-form"
+        >
+
+          {/* NAME */}
+
+          <div className="auth-field">
+            <label htmlFor="register-name">
+              Full Name
+            </label>
+
+            <div className="auth-input-wrapper">
+              <User
+                size={20}
+                className="auth-input-icon"
+              />
+
+              <input
+                id="register-name"
+                type="text"
+                placeholder="Enter your full name"
+                value={name}
+                onChange={(e) =>
+                  setName(e.target.value)
+                }
+                autoComplete="name"
+                required
+              />
+            </div>
+          </div>
+
+          {/* EMAIL */}
+
+          <div className="auth-field">
+            <label htmlFor="register-email">
+              Email Address
+            </label>
+
+            <div className="auth-input-wrapper">
+              <Mail
+                size={20}
+                className="auth-input-icon"
+              />
+
+              <input
+  id="register-email"
+  type="email"
+  placeholder="Enter your email"
+  value={email}
+  onChange={(e) => {
+    const value = e.target.value;
+    setEmail(value);
+    setEmailError(validateEmail(value));
+  }}
+  onBlur={() => {
+    setEmailError(validateEmail(email));
+  }}
+  autoComplete="email"
+  required
+/>
+{emailError && (
+  <p className="auth-error" role="alert">
+    {emailError}
+  </p>
+)}
+            </div>
+          </div>
+
+          {/* PASSWORD */}
+
+          <div className="auth-field">
+            <label htmlFor="register-password">
+              Password
+            </label>
+
+            <div className="auth-input-wrapper">
+              <Lock
+                size={20}
+                className="auth-input-icon"
+              />
+
+              <input
+                id="register-password"
+                type="password"
+                placeholder="Create a password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
+                autoComplete="new-password"
+                required
+              />
+            </div>
+          </div>
+
+          {/* REGISTER BUTTON */}
+
+          <button
+            type="submit"
+            className="auth-button"
+            disabled={loading}
+          >
+            <span>
+              {loading
+                ? "Creating Account..."
+                : "Create Account"}
+            </span>
+
+            {!loading && (
+              <ArrowRight size={19} />
+            )}
+          </button>
+
+        </form>
+
+        {/* LOGIN LINK */}
+
+        <div className="auth-footer">
+          <span>Already registered?</span>
+
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="auth-link auth-text-button auth-register-link"
+          >
+            Login
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
 
 export default Register;

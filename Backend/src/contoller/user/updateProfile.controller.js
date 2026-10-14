@@ -135,12 +135,6 @@ const updateProfile = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(
-            "Update Profile Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "Unable to update profile"
         });

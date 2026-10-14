@@ -8,14 +8,9 @@ const connectSocket = (userId) => {
         }
     });
 
-    socket.on("connect", () => {
-        console.log("Socket connected!");
-        console.log("Socket ID:", socket.id);
-    });
+    socket.on("connect", () => {});
 
-    socket.on("disconnect", () => {
-        console.log("Socket disconnected");
-    });
+    socket.on("disconnect", () => {});
 
     return socket;
 };

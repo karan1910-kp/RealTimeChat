@@ -1,0 +1,167 @@
+/* Shared styles for UserList.jsx and UserCard.jsx */
+
+@property --user-card-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.user-list-panel {
+  color: #e2e8f0;
+  background: #080d12;
+}
+
+.user-list-header {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: linear-gradient(135deg, rgba(11, 18, 32, 0.96), rgba(15, 23, 42, 0.84));
+}
+
+.user-list-heading-icon {
+  color: #a5b4fc;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+}
+
+.user-list-scroll {
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+  padding: 8px 2px 12px;
+}
+
+.user-list-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.user-list-empty {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.7);
+}
+
+/* User cards: animated neon border at rest, stronger on hover/focus */
+.user-card-neon {
+  --user-card-angle: 0deg;
+  position: relative;
+  isolation: isolate;
+  display: block;
+  margin: 7px 10px 11px;
+  padding: 12px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  outline: none;
+  cursor: pointer;
+  color: #e2e8f0;
+  background:
+    linear-gradient(115deg, rgba(8, 15, 29, 0.98), rgba(16, 24, 43, 0.98)) padding-box,
+    conic-gradient(
+      from var(--user-card-angle),
+      #22d3ee 0deg,
+      #3b82f6 75deg,
+      #8b5cf6 150deg,
+      #ec4899 220deg,
+      #8b5cf6 285deg,
+      #22d3ee 360deg
+    ) border-box;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  animation: user-card-border-rotate 4s linear infinite;
+  transition:
+    box-shadow 220ms ease,
+    transform 220ms ease,
+    filter 220ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Keep message text and avatar above the sparkle overlay. */
+.user-card-neon > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Twinkling dots + a moving light sweep, hidden until hover/focus/tap. */
+.user-card-neon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background-image:
+    radial-gradient(circle at 12% 28%, rgba(255, 255, 255, 0.95) 0 1px, transparent 2.5px),
+    radial-gradient(circle at 78% 22%, rgba(34, 211, 238, 0.95) 0 1px, transparent 3px),
+    radial-gradient(circle at 58% 78%, rgba(236, 72, 153, 0.95) 0 1px, transparent 3px),
+    linear-gradient(108deg, transparent 0%, transparent 36%, rgba(255, 255, 255, 0.18) 48%, transparent 60%, transparent 100%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 220% 100%;
+  background-position: 0 0, 0 0, 0 0, 180% 0;
+  transition: opacity 180ms ease;
+}
+
+/* Strong neon hover effect for mouse, keyboard focus, and touch press. */
+.user-card-neon:hover,
+.user-card-neon:focus-visible,
+.user-card-neon:active {
+  animation-duration: 1.35s;
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.72),
+    0 0 12px rgba(34, 211, 238, 0.62),
+    0 0 24px rgba(59, 130, 246, 0.48),
+    0 0 34px rgba(168, 85, 247, 0.40),
+    0 0 42px rgba(236, 72, 153, 0.22);
+  transform: translateY(-2px) scale(1.006);
+  filter: brightness(1.13);
+}
+
+.user-card-neon:hover::after,
+.user-card-neon:focus-visible::after,
+.user-card-neon:active::after {
+  opacity: 1;
+  animation: user-card-hover-sparkle 1.45s ease-in-out infinite;
+}
+
+.user-card-neon:focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.9);
+  outline-offset: 3px;
+}
+
+.user-card-neon h3 {
+  transition: color 180ms ease, text-shadow 180ms ease;
+}
+
+.user-card-neon:hover h3,
+.user-card-neon:focus-visible h3 {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.38);
+}
+
+@keyframes user-card-border-rotate {
+  to { --user-card-angle: 360deg; }
+}
+
+@keyframes user-card-hover-sparkle {
+  0% {
+    background-position: 0 0, 0 0, 0 0, 180% 0;
+    opacity: 0.35;
+  }
+  50% {
+    background-position: 0 0, 0 0, 0 0, 0 0;
+    opacity: 1;
+  }
+  100% {
+    background-position: 0 0, 0 0, 0 0, -180% 0;
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-card-neon,
+  .user-card-neon::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .user-card-neon:hover,
+  .user-card-neon:focus-visible,
+  .user-card-neon:active {
+    transform: none;
+  }
+}

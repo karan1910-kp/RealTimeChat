@@ -80,10 +80,13 @@ const verifyPassword = async (
 
     return response.data;
 };
+
+
 export {
     login,
     getMe,
     register,
     deleteAccount,
-    verifyPassword
+    verifyPassword,
+
 };

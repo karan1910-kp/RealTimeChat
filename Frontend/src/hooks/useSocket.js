@@ -199,6 +199,141 @@ function useSocket(user, handlers = {}) {
 
 
         // =====================================
+        // WEBRTC OFFER
+        // =====================================
+
+        const webrtcOffer = (data) => {
+
+            if (
+                handlersRef.current.webrtcOffer
+            ) {
+
+                handlersRef.current.webrtcOffer(
+                    data
+                );
+
+            }
+
+        };
+
+
+        // =====================================
+        // WEBRTC ANSWER
+        // =====================================
+
+        const webrtcAnswer = (data) => {
+
+            if (
+                handlersRef.current.webrtcAnswer
+            ) {
+
+                handlersRef.current.webrtcAnswer(
+                    data
+                );
+
+            }
+
+        };
+
+
+        // =====================================
+        // WEBRTC ICE CANDIDATE
+        // =====================================
+
+        const iceCandidate = (data) => {
+
+            if (
+                handlersRef.current.iceCandidate
+            ) {
+
+                handlersRef.current.iceCandidate(
+                    data
+                );
+
+            }
+
+        };
+
+
+        // =====================================
+        // INCOMING CALL
+        // =====================================
+
+        const incomingCall = (data) => {
+
+            if (
+                handlersRef.current.incomingCall
+            ) {
+
+                handlersRef.current.incomingCall(
+                    data
+                );
+
+            }
+
+        };
+        //////////////////////////////////
+        //Call rejected
+        //////////////////////////////////
+const callRejected = () => {
+
+    if (handlersRef.current.callRejected) {
+
+        handlersRef.current.callRejected();
+
+    }
+
+};
+///////////////////////////////////////
+///Call cancelled
+///////////////////////////////////////
+
+const callCancelled = (data) => {
+
+    if (handlersRef.current.callCancelled) {
+
+        handlersRef.current.callCancelled(data);
+
+    }
+
+};
+
+
+const callEnded = () => {
+
+    if (handlersRef.current.callEnded) {
+
+        handlersRef.current.callEnded();
+
+    }
+
+};
+
+const callAccepted = () => {
+
+    if (
+        handlersRef.current.callAccepted
+    ) {
+
+        handlersRef.current.callAccepted();
+
+    }
+
+};
+
+// =========================
+// USER OFFLINE
+// =========================
+
+const userOffline = (data) => {
+    if (handlersRef.current.userOffline) {
+        handlersRef.current.userOffline(data);
+    } else {
+        console.error("userOffline handler is missing in Chat.jsx");
+    }
+};
+
+        // =====================================
         // ADD SOCKET LISTENERS
         // =====================================
 
@@ -250,6 +385,67 @@ function useSocket(user, handlers = {}) {
         );
 
 
+        // =====================================
+        // WEBRTC OFFER LISTENER
+        // =====================================
+
+        newSocket.on(
+            "webrtcOffer",
+            webrtcOffer
+        );
+
+
+        // =====================================
+        // WEBRTC ANSWER LISTENER
+        // =====================================
+
+        newSocket.on(
+            "webrtcAnswer",
+            webrtcAnswer
+        );
+
+
+        // =====================================
+        // WEBRTC ICE LISTENER
+        // =====================================
+
+        newSocket.on(
+            "iceCandidate",
+            iceCandidate
+        );
+
+
+        // =====================================
+        // INCOMING CALL LISTENER
+        // =====================================
+
+        newSocket.on(
+            "incomingCall",
+            incomingCall
+        );
+        newSocket.on(
+    "callRejected",
+    callRejected
+);
+
+newSocket.on(
+    "callCancelled",
+    callCancelled
+);
+
+newSocket.on(
+    "callEnded",
+    callEnded
+);
+
+newSocket.on(
+    "callAccepted",
+    callAccepted
+);
+newSocket.on(
+    "userOffline",
+    userOffline
+);
         // =====================================
         // CLEANUP
         // =====================================
@@ -304,6 +500,48 @@ function useSocket(user, handlers = {}) {
             );
 
 
+            newSocket.off(
+                "webrtcOffer",
+                webrtcOffer
+            );
+
+
+            newSocket.off(
+                "webrtcAnswer",
+                webrtcAnswer
+            );
+
+
+            newSocket.off(
+                "iceCandidate",
+                iceCandidate
+            );
+
+
+            newSocket.off(
+                "incomingCall",
+                incomingCall
+            );
+            newSocket.off(
+    "callRejected",
+    callRejected
+);
+newSocket.off(
+    "callCancelled",
+    callCancelled
+);
+newSocket.off(
+    "callEnded",
+    callEnded
+);
+newSocket.off(
+    "callAccepted",
+    callAccepted
+);
+newSocket.off(
+    "userOffline",
+    userOffline
+);
             newSocket.disconnect();
 
 

@@ -40,12 +40,6 @@ const verifyPassword = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(
-            "Verify Password Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "Unable to verify password"
         });

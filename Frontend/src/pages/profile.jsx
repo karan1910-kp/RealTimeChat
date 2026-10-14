@@ -99,12 +99,6 @@ function Profile() {
             return response;
 
         } catch (error) {
-
-            console.log(
-                "Update Profile Error:",
-                error
-            );
-
             throw error;
         }
     };
@@ -137,12 +131,6 @@ function Profile() {
             );
 
         } catch (error) {
-
-            console.log(
-                "Verify Password Error:",
-                error
-            );
-
             throw error;
         }
     };
@@ -174,12 +162,6 @@ function Profile() {
             navigate("/");
 
         } catch (error) {
-
-            console.log(
-                "Delete Account Error:",
-                error
-            );
-
             throw error;
         }
     };

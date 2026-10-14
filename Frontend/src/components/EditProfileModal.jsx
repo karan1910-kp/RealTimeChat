@@ -1,457 +1,299 @@
 import { useEffect, useState } from "react";
-import { X, Camera } from "lucide-react";
+import {
+    X,
+    Camera,
+    UserRound,
+    Mail,
+    ShieldCheck,
+    Save,
+    LoaderCircle,
+    ImagePlus,
+} from "lucide-react";
+import "./EditProfileModel.css";
 
-function EditProfileModal({
-    isOpen,
-    onClose,
-    user,
-    onSave
-}) {
-
+function EditProfileModal({ isOpen, onClose, user, onSave }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [profilePicture, setProfilePicture] =
-        useState(null);
-
+    const [profilePicture, setProfilePicture] = useState(null);
     const [preview, setPreview] = useState(null);
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-
-    // ===============================
-    // Load Existing User Data
-    // ===============================
-
+    // Load the latest saved user details whenever the modal opens.
     useEffect(() => {
+        if (!isOpen || !user) return;
 
-        if (user) {
-            setName(user.name || "");
-            setEmail(user.email || "");
+        setName(user.name || "");
+        setEmail(user.email || "");
+        setProfilePicture(null);
+        setPreview(user.profilePicture || null);
+        setError("");
+    }, [user, isOpen]);
 
-            setPreview(
-                user.profilePicture || null
-            );
-        }
+    // Revoke local preview URLs so repeated image changes do not leak memory.
+    useEffect(() => {
+        return () => {
+            if (preview?.startsWith("blob:")) {
+                URL.revokeObjectURL(preview);
+            }
+        };
+    }, [preview]);
 
-    }, [user]);
+    // Allow Escape to close the modal when a save is not in progress.
+    useEffect(() => {
+        if (!isOpen || loading) return undefined;
 
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") handleClose();
+        };
 
-    // ===============================
-    // Close Modal
-    // ===============================
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+        // handleClose is intentionally kept local to this component.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, loading]);
 
     const handleClose = () => {
-
+        if (loading) return;
         setProfilePicture(null);
+        setPreview(user?.profilePicture || null);
         setError("");
         onClose();
-
     };
 
-
-    // ===============================
-    // Select Image
-    // ===============================
-
     const handleImageChange = (event) => {
-
-        const file = event.target.files[0];
-
-        if (!file) {
-            return;
-        }
-
-
-        // Check image
+        const file = event.target.files?.[0];
+        if (!file) return;
 
         if (!file.type.startsWith("image/")) {
-            setError(
-                "Please select an image file"
-            );
+            setError("Please choose a valid image file.");
+            event.target.value = "";
             return;
         }
-
-
-        // Check size
 
         if (file.size > 5 * 1024 * 1024) {
-            setError(
-                "Image must be smaller than 5 MB"
-            );
+            setError("Your profile photo must be smaller than 5 MB.");
+            event.target.value = "";
             return;
         }
-
 
         setError("");
         setProfilePicture(file);
-
-
-        // Create preview
-
-        const imageUrl =
-            URL.createObjectURL(file);
-
-        setPreview(imageUrl);
+        setPreview(URL.createObjectURL(file));
     };
 
-
-    // ===============================
-    // Save Profile
-    // ===============================
-
     const handleSubmit = async (event) => {
-
         event.preventDefault();
 
-        if (!name.trim()) {
-            setError("Name is required");
+        const trimmedName = name.trim();
+        const trimmedEmail = email.trim();
+
+        if (!trimmedName) {
+            setError("Please enter your name.");
             return;
         }
 
-        if (!email.trim()) {
-            setError("Email is required");
+        if (!trimmedEmail) {
+            setError("Please enter your email address.");
             return;
         }
-
 
         try {
-
             setLoading(true);
             setError("");
 
+            await onSave(trimmedName, trimmedEmail, profilePicture);
 
-            await onSave(
-                name,
-                email,
-                profilePicture
-            );
-
-
-            handleClose();
-
-        } catch (error) {
-
-            console.log(
-                "Update Profile Error:",
-                error
-            );
-
+            // Restore the saved image preview and close on success.
+            setProfilePicture(null);
+            setPreview(user?.profilePicture || null);
+            onClose();
+        } catch (saveError) {
             setError(
-                error.response?.data?.message ||
-                "Unable to update profile"
+                saveError.response?.data?.message ||
+                saveError.message ||
+                "We couldn't update your profile. Please try again."
             );
-
         } finally {
-
             setLoading(false);
-
         }
     };
 
+    if (!isOpen) return null;
 
-    if (!isOpen) {
-        return null;
-    }
-
+    const initials = name.trim().charAt(0).toUpperCase() || "U";
 
     return (
-        <div className="
-            fixed
-            inset-0
-            z-50
-            flex
-            items-center
-            justify-center
-            bg-black/50
-            px-4
-        ">
+        <div
+            className="edit-profile-overlay"
+            onMouseDown={(event) => {
+                if (event.target === event.currentTarget && !loading) {
+                    handleClose();
+                }
+            }}
+        >
+            <section
+                className="edit-profile-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="edit-profile-title"
+                aria-describedby="edit-profile-description"
+            >
+                <div className="edit-profile-topline" aria-hidden="true" />
 
-            <div className="
-                w-full
-                max-w-md
-                rounded-2xl
-                bg-white
-                shadow-2xl
-                p-6
-            ">
-
-
-                {/* ===============================
-                    Header
-                =============================== */}
-
-                <div className="
-                    flex
-                    items-center
-                    justify-between
-                    mb-6
-                ">
-
-                    <h2 className="
-                        text-xl
-                        font-semibold
-                        text-slate-800
-                    ">
-                        Edit Profile
-                    </h2>
-
+                <header className="edit-profile-header">
+                    <div>
+                        <span className="edit-profile-kicker">
+                            <span className="edit-profile-status-dot" />
+                            ACCOUNT SETTINGS
+                        </span>
+                        <h2 id="edit-profile-title">
+                            Edit <span>profile</span>
+                        </h2>
+                        <p id="edit-profile-description">
+                            Keep your details up to date.
+                        </p>
+                    </div>
 
                     <button
                         type="button"
+                        className="edit-profile-close"
                         onClick={handleClose}
-                        className="
-                            text-slate-500
-                            hover:text-slate-800
-                        "
+                        disabled={loading}
+                        aria-label="Close edit profile"
                     >
-                        <X size={22} />
+                        <X size={20} />
                     </button>
+                </header>
 
-                </div>
+                <form onSubmit={handleSubmit} className="edit-profile-form">
+                    <div className="edit-profile-photo-section">
+                        <div className="edit-profile-avatar-wrap">
+                            <div className="edit-profile-avatar-ring">
+                                <div className="edit-profile-avatar">
+                                    {preview ? (
+                                        <img src={preview} alt="Profile preview" />
+                                    ) : (
+                                        <span>{initials}</span>
+                                    )}
+                                </div>
+                            </div>
 
-
-                {/* ===============================
-                    Profile Picture
-                =============================== */}
-
-                <div className="
-                    flex
-                    justify-center
-                    mb-6
-                ">
-
-                    <div className="
-                        relative
-                        w-28
-                        h-28
-                    ">
-
-                        <div className="
-                            w-28
-                            h-28
-                            rounded-full
-                            overflow-hidden
-                            bg-slate-200
-                            flex
-                            items-center
-                            justify-center
-                            border
-                            border-slate-300
-                        ">
-
-                            {preview ? (
-
-                                <img
-                                    src={preview}
-                                    alt="Profile"
-                                    className="
-                                        w-full
-                                        h-full
-                                        object-cover
-                                    "
+                            <label
+                                className={`edit-profile-photo-button ${loading ? "is-disabled" : ""}`}
+                                aria-label="Change profile photo"
+                                title="Change profile photo"
+                            >
+                                <Camera size={17} />
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    disabled={loading}
+                                    aria-label="Upload a profile photo"
                                 />
-
-                            ) : (
-
-                                <span className="
-                                    text-3xl
-                                    font-semibold
-                                    text-slate-500
-                                ">
-                                    {name
-                                        ? name
-                                            .charAt(0)
-                                            .toUpperCase()
-                                        : "U"}
-                                </span>
-
-                            )}
-
+                            </label>
                         </div>
 
+                        <div className="edit-profile-photo-copy">
+                            <strong>Profile photo</strong>
+                            <span>JPG, PNG or WebP · up to 5 MB</span>
+                        </div>
 
-                        {/* Camera Button */}
-
-                        <label className="
-                            absolute
-                            bottom-0
-                            right-0
-                            w-9
-                            h-9
-                            rounded-full
-                            bg-blue-600
-                            text-white
-                            flex
-                            items-center
-                            justify-center
-                            cursor-pointer
-                            hover:bg-blue-700
-                        ">
-
-                            <Camera size={18} />
-
+                        <label className={`edit-profile-upload ${loading ? "is-disabled" : ""}`}>
+                            <ImagePlus size={16} />
+                            <span>Change</span>
                             <input
                                 type="file"
                                 accept="image/*"
                                 onChange={handleImageChange}
-                                className="hidden"
+                                disabled={loading}
+                                aria-label="Choose a new profile photo"
                             />
-
                         </label>
-
                     </div>
 
-                </div>
-
-
-                {/* ===============================
-                    Form
-                =============================== */}
-
-                <form
-                    onSubmit={handleSubmit}
-                    className="space-y-4"
-                >
-
-
-                    {/* Name */}
-
-                    <div>
-
-                        <label className="
-                            block
-                            mb-1
-                            text-sm
-                            font-medium
-                            text-slate-700
-                        ">
-                            Name
-                        </label>
-
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(event) =>
-                                setName(event.target.value)
-                            }
-                            className="
-                                w-full
-                                rounded-lg
-                                border
-                                border-slate-300
-                                px-3
-                                py-2.5
-                                outline-none
-                                focus:border-blue-500
-                            "
-                        />
-
+                    <div className="edit-profile-field">
+                        <label htmlFor="edit-profile-name">Full name</label>
+                        <div className="edit-profile-input-wrap">
+                            <UserRound size={18} aria-hidden="true" />
+                            <input
+                                id="edit-profile-name"
+                                type="text"
+                                placeholder="Enter your full name"
+                                value={name}
+                                onChange={(event) => setName(event.target.value)}
+                                autoComplete="name"
+                                maxLength={100}
+                                required
+                                disabled={loading}
+                            />
+                        </div>
                     </div>
 
-
-                    {/* Email */}
-
-                    <div>
-
-                        <label className="
-                            block
-                            mb-1
-                            text-sm
-                            font-medium
-                            text-slate-700
-                        ">
-                            Email
-                        </label>
-
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(event) =>
-                                setEmail(event.target.value)
-                            }
-                            className="
-                                w-full
-                                rounded-lg
-                                border
-                                border-slate-300
-                                px-3
-                                py-2.5
-                                outline-none
-                                focus:border-blue-500
-                            "
-                        />
-
+                    <div className="edit-profile-field">
+                        <label htmlFor="edit-profile-email">Email address</label>
+                        <div className="edit-profile-input-wrap">
+                            <Mail size={18} aria-hidden="true" />
+                            <input
+                                id="edit-profile-email"
+                                type="email"
+                                placeholder="you@example.com"
+                                value={email}
+                                onChange={(event) => setEmail(event.target.value)}
+                                autoComplete="email"
+                                maxLength={254}
+                                required
+                                disabled={loading}
+                            />
+                        </div>
+                        <span className="edit-profile-field-hint">
+                            Use an email address you can access.
+                        </span>
                     </div>
-
-
-                    {/* Error */}
 
                     {error && (
-
-                        <p className="
-                            text-sm
-                            text-red-600
-                        ">
-                            {error}
-                        </p>
-
+                        <div className="edit-profile-error" role="alert">
+                            <span className="edit-profile-error-mark">!</span>
+                            <p>{error}</p>
+                        </div>
                     )}
 
+                    <div className="edit-profile-security-note">
+                        <ShieldCheck size={18} aria-hidden="true" />
+                        <span>Your profile details are handled securely.</span>
+                    </div>
 
-                    {/* Buttons */}
-
-                    <div className="
-                        flex
-                        justify-end
-                        gap-3
-                        pt-3
-                    ">
-
+                    <footer className="edit-profile-actions">
                         <button
                             type="button"
+                            className="edit-profile-cancel"
                             onClick={handleClose}
-                            className="
-                                px-4
-                                py-2
-                                rounded-lg
-                                border
-                                border-slate-300
-                                text-slate-700
-                                hover:bg-slate-100
-                            "
+                            disabled={loading}
                         >
                             Cancel
                         </button>
 
-
                         <button
                             type="submit"
+                            className="edit-profile-save"
                             disabled={loading}
-                            className="
-                                px-4
-                                py-2
-                                rounded-lg
-                                bg-blue-600
-                                text-white
-                                hover:bg-blue-700
-                                disabled:opacity-50
-                            "
                         >
-
-                            {loading
-                                ? "Saving..."
-                                : "Save Changes"
-                            }
-
+                            {loading ? (
+                                <>
+                                    <LoaderCircle size={17} className="edit-profile-spinner" />
+                                    <span>Saving changes...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Save size={17} />
+                                    <span>Save changes</span>
+                                </>
+                            )}
                         </button>
-
-                    </div>
-
+                    </footer>
                 </form>
-
-            </div>
-
+            </section>
         </div>
     );
 }

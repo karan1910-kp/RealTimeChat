@@ -55,12 +55,6 @@ const deleteAccount = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(
-            "Delete Account Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "Unable to delete account"
         });

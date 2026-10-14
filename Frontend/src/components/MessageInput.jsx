@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { uploadFile } from "../services/message.service";
+import "./MessageInput.css";
 
 function MessageInput({
     selectedUser,
@@ -167,17 +168,10 @@ function MessageInput({
 
 
         } catch (error) {
-
-            console.log(
-                "File Send Error:",
-                error
-            );
-
             alert(
                 error.response?.data?.message ||
                 "File upload failed"
             );
-
         } finally {
 
             setUploading(false);
@@ -202,11 +196,10 @@ function MessageInput({
 
         <div
             className="
-                px-5
-                py-4
-                bg-white
-                border-t
-                border-slate-200
+                shrink-0
+                border-t border-slate-800
+                bg-slate-900
+                px-5 py-4
             "
         >
 
@@ -221,9 +214,9 @@ function MessageInput({
                         items-center
                         justify-between
                         gap-3
-                        bg-pink-50
+                        bg-slate-800
                         border
-                        border-pink-200
+                        border-slate-700
                         rounded-xl
                         px-3
                         py-2
@@ -265,7 +258,7 @@ function MessageInput({
                                 className="
                                     text-sm
                                     font-medium
-                                    text-slate-700
+                                    text-slate-100
                                     truncate
                                 "
                             >
@@ -305,7 +298,7 @@ function MessageInput({
                             justify-center
                             text-slate-400
                             hover:text-red-500
-                            hover:bg-white
+                            hover:bg-slate-700
                             transition
                             cursor-pointer
                         "
@@ -327,9 +320,9 @@ function MessageInput({
                     className="
                         mb-3
                         w-72
-                        bg-white
+                        bg-slate-800
                         border
-                        border-slate-200
+                        border-slate-700
                         rounded-2xl
                         shadow-xl
                         p-3
@@ -363,7 +356,8 @@ function MessageInput({
                                         flex
                                         items-center
                                         justify-center
-                                        hover:bg-pink-50
+                                        text-slate-100
+                                        hover:bg-slate-700
                                         hover:scale-110
                                         transition
                                         cursor-pointer
@@ -389,9 +383,9 @@ function MessageInput({
             items-center
             justify-between
             gap-3
-            bg-pink-50
+            bg-slate-800
             border
-            border-pink-200
+            border-slate-700
             rounded-xl
             px-4
             py-3
@@ -401,14 +395,14 @@ function MessageInput({
             <p className="
                 text-xs
                 font-semibold
-                text-pink-500
+                text-pink-400
             ">
                 Replying to message
             </p>
 
             <p className="
                 text-sm
-                text-slate-600
+                text-slate-200
                 truncate
             ">
                 {replyingTo.message ||
@@ -437,18 +431,13 @@ function MessageInput({
 
             <div
                 className="
+                    message-input-neon
                     flex
                     items-center
                     gap-3
-                    bg-slate-50
-                    border
-                    border-slate-200
                     rounded-2xl
                     px-3
                     py-2
-                    focus-within:border-pink-300
-                    focus-within:ring-2
-                    focus-within:ring-pink-100
                     transition-all
                     duration-200
                 "
@@ -470,8 +459,8 @@ function MessageInput({
                         items-center
                         justify-center
                         text-slate-400
-                        hover:text-pink-500
-                        hover:bg-pink-50
+                        hover:text-indigo-300
+                        hover:bg-slate-700
                         transition
                         cursor-pointer
                     "
@@ -575,7 +564,7 @@ function MessageInput({
                         outline-none
                         border-none
                         text-sm
-                        text-slate-800
+                        text-white
                         placeholder:text-slate-400
                         py-2
                         disabled:opacity-60
@@ -605,8 +594,8 @@ function MessageInput({
 
                         ${
                             showEmojiPicker
-                                ? "text-pink-500 bg-pink-50"
-                                : "text-slate-400 hover:text-pink-500 hover:bg-pink-50"
+                                ? "text-indigo-300 bg-slate-700"
+                                : "text-slate-400 hover:text-indigo-300 hover:bg-slate-700"
                         }
                     `}
                     title="Emoji"
@@ -637,12 +626,12 @@ function MessageInput({
                         flex
                         items-center
                         justify-center
-                        bg-pink-400
-                        hover:bg-pink-500
+                        bg-indigo-600
+                        hover:bg-indigo-500
                         text-white
                         shadow-sm
                         hover:shadow-md
-                        disabled:bg-slate-300
+                        disabled:bg-slate-600
                         disabled:cursor-not-allowed
                         transition-all
                         duration-200

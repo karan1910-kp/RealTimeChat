@@ -47,12 +47,6 @@ const deleteMessage = async (req, res) => {
         });
 
     } catch (error) {
-
-        console.log(
-            "Delete Message Error:",
-            error.message
-        );
-
         res.status(500).json({
             message: "Unable to delete message"
         });

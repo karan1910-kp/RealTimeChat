@@ -1,12 +1,12 @@
-import formatTime from "../utils/formatTime";
-
 import {
     Check,
     CheckCheck,
     FileText,
     Download,
-    Reply
+    Reply,
 } from "lucide-react";
+import formatTime from "../utils/formatTime";
+import "./MessageList.css";
 
 function MessageList({
     messages,
@@ -15,329 +15,160 @@ function MessageList({
     isTyping,
     messagesEndRef,
     setReplyingTo,
-    onDeleteMessage
+    onDeleteMessage,
 }) {
     return (
         <div
-            className="
-                flex-1
-                overflow-y-auto
-                px-6
-                py-6
-                bg-pink-50
-            "
+            className="flex-1 min-h-0 overflow-y-auto px-4 py-6 sm:px-6 bg-[#080D12] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
             {messages.map((msg, index) => {
-                const isMyMessage =
-                    String(msg.sender) ===
-                    String(user._id);
+                const isMyMessage = String(msg.sender) === String(user?._id);
+                const isTextMessage = msg.messageType === "text" && Boolean(msg.message);
 
                 return (
                     <div
                         key={msg._id || index}
-                        className={`
-                            flex
-                            mb-4
-                            ${
-                                isMyMessage
-                                    ? "justify-end"
-                                    : "justify-start"
-                            }
-                        `}
+                        className={`mb-4 flex ${
+                            isMyMessage ? "justify-end" : "justify-start"
+                        }`}
                     >
                         <div
                             className={`
-                                max-w-[70%]
-                                px-4
-                                py-3
-                                shadow-sm
-
-                                ${
-                                    isMyMessage
-                                        ? `
-                                            bg-pink-300
-                                            text-slate-900
-                                            rounded-2xl
-                                            rounded-br-md
-                                        `
-                                        : `
-                                            bg-sky-200
-                                            text-slate-900
-                                            rounded-2xl
-                                            rounded-bl-md
-                                        `
+                                relative min-w-0 max-w-[85%] break-words px-4 py-3 shadow-sm
+                                sm:max-w-[70%]
+                                ${isMyMessage
+                                    ? "rounded-2xl rounded-br-md bg-[#0964a0] text-white"
+                                    : "rounded-2xl rounded-bl-md bg-[#202B38] text-white"
                                 }
+                                ${isTextMessage ? "message-bubble--animated-border" : ""}
                             `}
                         >
-                            {/* =========================
-                                REPLIED MESSAGE
-                            ========================== */}
-
+                            {/* Replied message preview */}
                             {msg.replyTo && (
-                                <div
-                                    className="
-                                        mb-2
-                                        px-3
-                                        py-2
-                                        rounded-lg
-                                        bg-white/60
-                                        border-l-4
-                                        border-pink-500
-                                    "
-                                >
-                                    <p
-                                        className="
-                                            text-[11px]
-                                            font-semibold
-                                            text-pink-600
-                                            mb-0.5
-                                        "
-                                    >
-                                        {String(msg.replyTo.sender) ===
-                                        String(user._id)
+                                <div className="mb-2 rounded-lg border-l-4 border-white/50 bg-black/20 px-3 py-2">
+                                    <p className="mb-0.5 text-[11px] font-semibold text-white">
+                                        {String(msg.replyTo.sender) === String(user?._id)
                                             ? "You"
                                             : selectedUser?.name || "User"}
                                     </p>
 
                                     {msg.replyTo.message ? (
-                                        <p
-                                            className="
-                                                text-xs
-                                                text-slate-600
-                                                truncate
-                                            "
-                                        >
+                                        <p className="truncate text-xs text-slate-200">
                                             {msg.replyTo.message}
                                         </p>
                                     ) : msg.replyTo.messageType === "image" ? (
-                                        <p className="text-xs text-slate-600">
-                                            🖼️ Image
-                                        </p>
+                                        <p className="text-xs text-slate-200">🖼️ Image</p>
                                     ) : msg.replyTo.messageType === "file" ? (
-                                        <p
-                                            className="
-                                                text-xs
-                                                text-slate-600
-                                                truncate
-                                            "
-                                        >
-                                            📎{" "}
-                                            {msg.replyTo.fileName || "File"}
+                                        <p className="truncate text-xs text-slate-200">
+                                            📎 {msg.replyTo.fileName || "File"}
                                         </p>
                                     ) : (
-                                        <p className="text-xs text-slate-500">
-                                            Attachment
-                                        </p>
+                                        <p className="text-xs text-slate-300">Attachment</p>
                                     )}
                                 </div>
                             )}
 
-                            {/* =========================
-                                TEXT MESSAGE
-                            ========================== */}
+                            {/* Text message */}
+                            {msg.messageType === "text" && msg.message && (
+                                <p className="whitespace-pre-wrap break-words text-sm font-medium leading-relaxed">
+                                    {msg.message}
+                                </p>
+                            )}
 
-                            {msg.messageType === "text" &&
-                                msg.message && (
-                                    <p
-                                        className="
-                                            text-sm
-                                            font-medium
-                                            leading-relaxed
-                                            break-words
-                                            whitespace-pre-wrap
-                                        "
-                                    >
-                                        {msg.message}
-                                    </p>
-                                )}
-
-                            {/* =========================
-                                IMAGE MESSAGE
-                            ========================== */}
-
+                            {/* Image message: no animated border */}
                             {msg.messageType === "image" && (
                                 <div>
                                     <img
                                         src={msg.fileUrl}
-                                        alt={msg.fileName || "Image"}
-                                        className="
-                                            max-w-full
-                                            max-h-80
-                                            rounded-xl
-                                            object-cover
-                                            cursor-pointer
-                                        "
-                                        onClick={() =>
-                                            window.open(
-                                                msg.fileUrl,
-                                                "_blank"
-                                            )
-                                        }
+                                        alt={msg.fileName || "Image attachment"}
+                                        loading="lazy"
+                                        className="max-h-80 max-w-full cursor-pointer rounded-xl object-cover"
+                                        onClick={() => {
+                                            if (msg.fileUrl) {
+                                                window.open(
+                                                    msg.fileUrl,
+                                                    "_blank",
+                                                    "noopener,noreferrer"
+                                                );
+                                            }
+                                        }}
                                     />
 
                                     {msg.fileName && (
-                                        <p
-                                            className="
-                                                text-xs
-                                                mt-2
-                                                opacity-70
-                                            "
-                                        >
+                                        <p className="mt-2 break-words text-xs text-white/80">
                                             {msg.fileName}
                                         </p>
                                     )}
                                 </div>
                             )}
 
-                            {/* =========================
-                                FILE MESSAGE
-                            ========================== */}
-
+                            {/* File message: no animated border */}
                             {msg.messageType === "file" && (
                                 <a
                                     href={msg.fileUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="
-                                        flex
-                                        items-center
-                                        gap-3
-                                        min-w-48
-                                        hover:opacity-80
-                                        transition
-                                    "
+                                    className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-80"
                                 >
-                                    <div
-                                        className="
-                                            w-10
-                                            h-10
-                                            rounded-xl
-                                            bg-white/70
-                                            flex
-                                            items-center
-                                            justify-center
-                                            shrink-0
-                                        "
-                                    >
-                                        <FileText size={21} />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-black/20">
+                                        <FileText size={21} aria-hidden="true" />
                                     </div>
 
-                                    <div
-                                        className="
-                                            flex-1
-                                            min-w-0
-                                        "
-                                    >
-                                        <p
-                                            className="
-                                                text-sm
-                                                font-semibold
-                                                truncate
-                                            "
-                                        >
-                                            {msg.fileName}
+                                    <div className="min-w-0 flex-1">
+                                        <p className="break-words text-sm font-semibold">
+                                            {msg.fileName || "File"}
                                         </p>
-
-                                        <p
-                                            className="
-                                                text-xs
-                                                opacity-60
-                                                mt-0.5
-                                            "
-                                        >
+                                        <p className="mt-0.5 text-xs text-white/70">
                                             Open file
                                         </p>
                                     </div>
 
-                                    <Download
-                                        size={18}
-                                        className="shrink-0"
-                                    />
+                                    <Download size={18} className="shrink-0" aria-hidden="true" />
                                 </a>
                             )}
 
-                            {/* =========================
-                                TIME + SEEN
-                            ========================== */}
-
+                            {/* Timestamp and delivery/read status */}
                             <div
-                                className={`
-                                    flex
-                                    items-center
-                                    justify-end
-                                    gap-1.5
-                                    mt-1.5
-                                    text-[10px]
-
-                                    ${
-                                        isMyMessage
-                                            ? "text-pink-700"
-                                            : "text-sky-700"
-                                    }
-                                `}
+                                className={`mt-1.5 flex items-center justify-end gap-1.5 text-[10px] ${
+                                    isMyMessage ? "text-white/80" : "text-slate-400"
+                                }`}
                             >
-                                <span>
-                                    {formatTime(msg.createdAt)}
-                                </span>
+                                <span>{formatTime(msg.createdAt)}</span>
 
-                                {isMyMessage &&
-                                    (msg.seen ? (
+                                {isMyMessage && (
+                                    msg.seen ? (
                                         <CheckCheck
                                             size={14}
-                                            className="text-blue-600"
+                                            className="text-white"
+                                            aria-label="Seen"
                                         />
                                     ) : (
-                                        <Check size={14} />
-                                    ))}
+                                        <Check size={14} aria-label="Sent" />
+                                    )
+                                )}
                             </div>
 
-                            {/* =========================
-                                REPLY + DELETE BUTTONS
-                            ========================== */}
-
-                            <div className="flex items-center gap-3 mt-1">
-                                {/* Reply button */}
+                            {/* Message actions */}
+                            <div className="mt-1 flex items-center gap-3">
                                 <button
                                     type="button"
-                                    onClick={() =>
-                                        setReplyingTo(msg)
-                                    }
-                                    className="
-                                        flex
-                                        items-center
-                                        gap-1
-                                        text-[11px]
-                                        text-slate-500
-                                        hover:text-pink-600
-                                        transition
-                                        cursor-pointer
-                                    "
+                                    onClick={() => setReplyingTo(msg)}
+                                    className="flex cursor-pointer items-center gap-1 text-[11px] text-white/70 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
+                                    aria-label="Reply to message"
                                 >
-                                    <Reply size={13} />
+                                    <Reply size={13} aria-hidden="true" />
                                     Reply
                                 </button>
 
-                                {/* Delete button */}
                                 {isMyMessage && (
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            onDeleteMessage(
-                                                msg._id
-                                            )
-                                        }
-                                        className="
-                                            flex
-                                            items-center
-                                            gap-1
-                                            text-[11px]
-                                            text-slate-500
-                                            hover:text-red-500
-                                            transition
-                                            cursor-pointer
-                                        "
+                                        onClick={() => onDeleteMessage?.(msg._id)}
+                                        className="flex cursor-pointer items-center gap-1 text-[11px] text-white/70 transition hover:text-rose-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-300"
+                                        aria-label="Delete message"
                                     >
-                                        🗑️ Delete
+                                        <span aria-hidden="true">🗑️</span>
+                                        Delete
                                     </button>
                                 )}
                             </div>
@@ -346,71 +177,20 @@ function MessageList({
                 );
             })}
 
-            {/* =========================
-                TYPING INDICATOR
-            ========================== */}
-
+            {/* Typing indicator */}
             {isTyping && (
-                <div
-                    className="
-                        flex
-                        justify-start
-                        mb-4
-                    "
-                >
-                    <div
-                        className="
-                            bg-sky-200
-                            rounded-2xl
-                            rounded-bl-md
-                            px-5
-                            py-3
-                            shadow-sm
-                        "
-                    >
-                        <div
-                            className="
-                                flex
-                                items-center
-                                gap-1
-                            "
-                        >
-                            <span
-                                className="
-                                    w-1.5
-                                    h-1.5
-                                    rounded-full
-                                    bg-sky-600
-                                    animate-bounce
-                                "
-                            />
-
-                            <span
-                                className="
-                                    w-1.5
-                                    h-1.5
-                                    rounded-full
-                                    bg-sky-600
-                                    animate-bounce
-                                    [animation-delay:150ms]
-                                "
-                            />
-
-                            <span
-                                className="
-                                    w-1.5
-                                    h-1.5
-                                    rounded-full
-                                    bg-sky-600
-                                    animate-bounce
-                                    [animation-delay:300ms]
-                                "
-                            />
+                <div className="mb-4 flex justify-start" aria-label="User is typing">
+                    <div className="rounded-2xl rounded-bl-md bg-[#202B38] px-5 py-3 shadow-sm">
+                        <div className="flex items-center gap-1">
+                            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#36D879]" />
+                            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#36D879] [animation-delay:150ms]" />
+                            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#36D879] [animation-delay:300ms]" />
                         </div>
                     </div>
                 </div>
             )}
 
+            {/* Auto-scroll reference */}
             <div ref={messagesEndRef} />
         </div>
     );

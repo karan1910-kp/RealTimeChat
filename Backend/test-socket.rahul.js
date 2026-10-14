@@ -8,10 +8,6 @@ const socket = io("http://localhost:3000", {
     }
 });
 
-socket.on("connect", () => {
-    console.log("Rahul connected:", socket.id);
-});
+socket.on("connect", () => {});
 
-socket.on("receiveMessage", (data) => {
-    console.log("Rahul received:", data);
-});
+socket.on("receiveMessage", (data) => {});

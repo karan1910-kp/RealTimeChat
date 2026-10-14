@@ -1,237 +1,99 @@
 import formatTime from "../utils/formatTime";
-
-import {
-    UserRound
-} from "lucide-react";
-
+import { UserRound } from "lucide-react";
+import "./UserList.css";
 
 function UserCard({
     user,
     selectUser,
-    unreadCount,
-    isOnline,
-    lastMessage
+    unreadCount = 0,
+    isOnline = false,
+    lastMessage = null,
+    isSelected = false,
 }) {
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            selectUser(user);
+        }
+    };
+
+    const lastMessagePreview = lastMessage
+        ? lastMessage.messageType === "image"
+            ? "📷 Photo"
+            : lastMessage.messageType === "file"
+                ? `📎 ${lastMessage.fileName || "File"}`
+                : lastMessage.message || "Message"
+        : isOnline
+            ? "Online"
+            : "Offline";
 
     return (
-
         <div
+            role="button"
+            tabIndex={0}
+            aria-pressed={isSelected}
+            aria-label={`Open chat with ${user?.name || "Unknown User"}`}
             onClick={() => selectUser(user)}
-            className="
-                group
-                mx-2
-                mb-2
-                p-3
-                rounded-2xl
-                cursor-pointer
-                border
-                border-transparent
-                hover:border-slate-200
-                hover:bg-slate-50
-                hover:shadow-sm
-                transition-all
-                duration-200
-            "
+            onKeyDown={handleKeyDown}
+            className="user-card-neon group"
         >
-
-            <div className="
-                flex
-                items-center
-                gap-3
-            ">
-
-
-                {/* =========================
-                    AVATAR
-                ========================== */}
-
-                <div className="
-                    relative
-                    shrink-0
-                ">
-
-                    <div className="
-                        w-11
-                        h-11
-                        rounded-full
-                        bg-indigo-100
-                        flex
-                        items-center
-                        justify-center
-                        text-indigo-600
-                        font-semibold
-                        overflow-hidden
-                    ">
-
+            <div className="flex min-w-0 items-center gap-3">
+                {/* AVATAR */}
+                <div className="relative shrink-0">
+                    <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-indigo-400/10 text-indigo-200 ring-1 ring-white/10">
                         {user?.profilePicture ? (
-
                             <img
-                                src={
-                                    user.profilePicture
-                                }
-                                alt={
-                                    user.name
-                                }
-                                className="
-                                    w-full
-                                    h-full
-                                    object-cover
-                                "
+                                src={user.profilePicture}
+                                alt={user.name || "User"}
+                                className="h-full w-full object-cover"
+                                loading="lazy"
                             />
-
                         ) : (
-
-                            <UserRound
-                                size={21}
-                            />
-
+                            <UserRound size={22} aria-hidden="true" />
                         )}
-
                     </div>
 
-
-                    {/* =========================
-                        ONLINE DOT
-                    ========================== */}
-
+                    {/* ONLINE STATUS */}
                     <span
-                        className={`
-                            absolute
-                            right-0
-                            bottom-0
-                            w-3
-                            h-3
-                            rounded-full
-                            border-2
-                            border-white
-
-                            ${
-                                isOnline
-                                    ? "bg-emerald-500"
-                                    : "bg-slate-400"
-                            }
-                        `}
+                        className={`absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-slate-950 ${
+                            isOnline ? "bg-emerald-400" : "bg-slate-500"
+                        }`}
+                        title={isOnline ? "Online" : "Offline"}
+                        aria-label={isOnline ? "Online" : "Offline"}
                     />
-
                 </div>
 
-
-                {/* =========================
-                    USER INFORMATION
-                ========================== */}
-
-                <div className="
-                    flex-1
-                    min-w-0
-                ">
-
-
-                    {/* =========================
-                        NAME + TIME
-                    ========================== */}
-
-                    <div className="
-                        flex
-                        items-center
-                        justify-between
-                        gap-2
-                    ">
-
-                        <h3 className="
-                            font-semibold
-                            text-sm
-                            text-slate-800
-                            truncate
-                        ">
-
-                            {user.name}
-
+                {/* USER INFORMATION */}
+                <div className="min-w-0 flex-1">
+                    {/* USER NAME + TIME */}
+                    <div className="flex items-center justify-between gap-2">
+                        <h3 className="min-w-0 truncate text-sm font-semibold tracking-wide text-slate-100 transition-colors group-hover:text-white">
+                            {user?.name || "Unknown User"}
                         </h3>
 
-
-                        {lastMessage && (
-
-                            <small className="
-                                shrink-0
-                                text-[11px]
-                                text-slate-400
-                            ">
-
-                                {formatTime(
-                                    lastMessage.createdAt
-                                )}
-
+                        {lastMessage?.createdAt && (
+                            <small className="shrink-0 text-[10px] font-medium text-slate-500">
+                                {formatTime(lastMessage.createdAt)}
                             </small>
-
                         )}
-
                     </div>
 
-
-                    {/* =========================
-                        LAST MESSAGE
-                    ========================== */}
-
-                    <div className="
-                        flex
-                        items-center
-                        justify-between
-                        gap-2
-                        mt-1
-                    ">
-
-                        <p className="
-                            text-xs
-                            text-slate-500
-                            truncate
-                        ">
-
-                            {lastMessage
-                                ? lastMessage.message
-                                : isOnline
-                                    ? "Online"
-                                    : "Offline"
-                            }
-
+                    {/* LAST MESSAGE + UNREAD COUNT */}
+                    <div className="mt-1 flex items-center justify-between gap-2">
+                        <p className="min-w-0 truncate text-xs font-medium text-slate-400 transition-colors group-hover:text-slate-300">
+                            {lastMessagePreview}
                         </p>
 
-
-                        {/* =========================
-                            UNREAD COUNT
-                        ========================== */}
-
                         {unreadCount > 0 && (
-
-                            <span className="
-                                shrink-0
-                                min-w-5
-                                h-5
-                                px-1.5
-                                rounded-full
-                                bg-indigo-600
-                                text-white
-                                text-[10px]
-                                font-bold
-                                flex
-                                items-center
-                                justify-center
-                            ">
-
-                                {unreadCount}
-
+                            <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-indigo-500 px-1.5 text-[10px] font-bold text-white shadow-md shadow-indigo-500/20">
+                                {unreadCount > 99 ? "99+" : unreadCount}
                             </span>
-
                         )}
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     );
 }
-
 
 export default UserCard;
